@@ -20,9 +20,10 @@ namespace Seven7
             }
         }
 
+        // Реализация интерфейса IEnumerable<T>
         public IEnumerator<T> GetEnumerator()
         {
-            return new BinaryTreeEnumerator(this);
+            return new InOrderEnumerator(root); // Создаем и возвращаем итератор для прямого обхода дерева
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -68,15 +69,15 @@ namespace Seven7
             }
         }
 
-        private class BinaryTreeEnumerator : IEnumerator<T>
+        private class InOrderEnumerator : IEnumerator<T>
         {
-            private BinaryTree<T> tree;
+            private Node root;
             private Stack<Node> stack;
             private Node current;
 
-            public BinaryTreeEnumerator(BinaryTree<T> tree)
+            public InOrderEnumerator(Node root)
             {
-                this.tree = tree;
+                this.root = root;
                 stack = new Stack<Node>();
                 current = null;
                 Reset();
@@ -84,12 +85,12 @@ namespace Seven7
 
             public T Current
             {
-                get { return current.Value; } // Возвращает текущее значение
+                get { return current.Value; }
             }
 
             object IEnumerator.Current
             {
-                get { return Current; } // Возвращает текущий объект
+                get { return Current; }
             }
 
             public bool MoveNext()
@@ -100,7 +101,7 @@ namespace Seven7
                     return false;
                 }
 
-                current = stack.Pop(); // Получаем текущий узел
+                current = stack.Pop(); // Извлекаем узел из стека
                 Node node = current.Right; // Получаем правого потомка текущего узла
                 while (node != null)
                 {
@@ -114,7 +115,7 @@ namespace Seven7
             public void Reset()
             {
                 stack.Clear(); // Очищаем стек
-                Node node = tree.root; // Получаем корневой узел
+                Node node = root; // Получаем корневой узел
                 while (node != null)
                 {
                     stack.Push(node); // Добавляем в стек текущий узел и все его левые потомки
@@ -124,52 +125,66 @@ namespace Seven7
 
             public void Dispose()
             {
-                // В данном случае нет неуправляемых ресурсов, требующих очистки.
-                // Поэтому метод Dispose() остается пустым.
             }
-
         }
 
         // Операторы ++ и --
         public static BinaryTree<T> operator ++(BinaryTree<T> tree)
         {
-            tree.MoveNext();
+            tree.MoveNext(); // Используем метод MoveNext() для перемещения к следующему узлу в прямом обходе
             return tree;
         }
 
         public static BinaryTree<T> operator --(BinaryTree<T> tree)
         {
-            tree.MovePrevious();
+            tree.MovePrevious(); // Используем метод MovePrevious() для перемещения к предыдущему узлу в прямом обходе
             return tree;
         }
 
         // Методы Next(), Previous() и Current()
         public bool MoveNext()
         {
-            var enumerator = GetEnumerator(); // Создание экземпляра итератора
-            enumerator.MoveNext(); // Перемещение к следующему элементу
+            var enumerator = GetEnumerator(); // Получаем итератор для прямого обхода дерева
+            enumerator.MoveNext(); // Перемещаемся к следующему элементу
             return true; // Возвращаем true для указания успешного перемещения
         }
 
-
         public bool MovePrevious()
         {
-            var enumerator = GetEnumerator(); // Создание экземпляра итератора
-            if (enumerator.MoveNext()) // Перемещение к следующему элементу и проверка успешности перемещения
+            var enumerator = GetEnumerator(); // Получаем итератор для прямого обхода дерева
+            if (enumerator.MoveNext()) // Перемещаемся к следующему элементу и проверяем успешность перемещения
             {
-                enumerator.MoveNext(); // Перемещение к следующему элементу
+                enumerator.MoveNext(); // Перемещаемся к следующему элементу
                 return true; // Возвращаем true для указания успешного перемещения
             }
             return false; // Возвращаем false, если перемещение не удалось или итератор достиг конца
         }
 
-
         public T Current()
         {
-            var enumerator = GetEnumerator(); // Создание экземпляра итератора
-            enumerator.MoveNext(); // Перемещение к следующему элементу
-            return enumerator.Current; // Возвращение текущего элемента
+            var enumerator = GetEnumerator(); // Получаем итератор для прямого обхода дерева
+            enumerator.MoveNext(); // Перемещаемся к следующему элементу
+            return enumerator.Current; // Возвращаем текущий элемент
         }
 
+        // Внешний итератор для центрального обхода
+        public IEnumerable<T> CentralTraversal()
+        {
+            var sortedList = new List<T>();
+            CentralTraversal(root, sortedList);
+            return sortedList;
+        }
+
+        private void CentralTraversal(Node node, List<T> sortedList)
+        {
+            if (node != null)
+            {
+                CentralTraversal(node.Left, sortedList);
+                sortedList.Add(node.Value);
+                CentralTraversal(node.Right, sortedList);
+            }
+        }
     }
 }
+
+
