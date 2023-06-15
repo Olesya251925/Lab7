@@ -144,7 +144,7 @@ namespace Seven7
         // Методы Next(), Previous() и Current()
         public bool MoveNext()
         {
-            var enumerator = GetEnumerator(); // Получаем итератор для прямого обхода дерев
+            var enumerator = GetEnumerator(); // Получаем итератор для прямого обхода дерева
             enumerator.MoveNext(); // Перемещаемся к следующему элементу
             return true; // Возвращаем true для указания успешного перемещения
         }
