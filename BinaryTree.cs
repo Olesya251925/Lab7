@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Seven7
+namespace Seven
 {
     public class BinaryTree<T> : IEnumerable<T>
     {
