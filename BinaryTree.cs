@@ -20,7 +20,7 @@ namespace Seven7
             }
         }
 
-        // Реализация интерфейс IEnumerable<T>
+        // Реализация интерфейса IEnumerable<T>
         public IEnumerator<T> GetEnumerator()
         {
             return new InOrderEnumerator(root); // Создаем и возвращаем итератор для прямого обхода дерева
